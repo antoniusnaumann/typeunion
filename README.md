@@ -30,7 +30,7 @@ type SubSet = String + TypeB;
 fn main() {
   // `From` is automatically implemented for all types contained in SubSet
   let sub_set: SubSet = "hello".to_string().into();
-  let super_set: SuperSet = sub.into();
+  let super_set: SuperSet = sub_set.into();
 }
 ```
 
