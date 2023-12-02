@@ -55,6 +55,45 @@ impl Parse for Args {
     }
 }
 
+/// Create an enum that contains a case for all given types
+///
+/// # Examples
+/// By default, enum cases are named after their contained type. To pick a different name, you can use a type alias:
+/// ```rust
+/// use typeunion::type_union;
+///
+/// type Int = i64;
+///
+/// #[type_union]
+/// #[derive(Debug, PartialEq)]
+/// type Union = String + Int;
+///
+/// // `From` is derived automatically for all cases
+/// let my_string: Union = "Hello World!".to_string().into();
+/// let my_enum_case = Union::String("Hello World!".to_string());
+/// assert_eq!(my_string, my_enum_case);
+/// ```
+///
+/// Typeunions can declare a super set, that they should be convertible to:
+/// ```rust
+/// use typeunion::type_union;
+/// use std::sync::Arc;
+///
+/// type BoxedStr = Box<str>;
+/// type ArcStr = Arc<str>;
+///
+/// #[type_union(super = SomeString)]
+/// type UniqueString = String + BoxedStr;
+///
+/// #[type_union]
+/// #[derive(Debug, PartialEq)]
+/// type SomeString = String + BoxedStr + ArcStr;
+///
+/// let a: UniqueString = "a".to_string().into();
+/// let b: SomeString = "a".to_string().into();
+/// let a_lower: SomeString = a.into();
+/// assert_eq!(a_lower, b);
+/// ```
 #[proc_macro_attribute]
 pub fn type_union(attr: TokenStream, item: TokenStream) -> TokenStream {
     let Args { superset } = parse_macro_input!(attr as Args);
