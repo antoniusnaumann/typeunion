@@ -1,11 +1,8 @@
 use proc_macro::TokenStream;
-use quote::{quote, ToTokens};
+use quote::quote;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::punctuated::Punctuated;
-use syn::{
-    parse_macro_input, Attribute, Expr, ExprCall, ExprField, ExprMethodCall, Ident, Token,
-    Visibility,
-};
+use syn::{parse_macro_input, Attribute, Ident, Token, Visibility};
 
 struct TypeItem {
     attrs: Vec<Attribute>,
@@ -16,7 +13,7 @@ struct TypeItem {
 
 impl Parse for TypeItem {
     fn parse(input: ParseStream) -> Result<Self> {
-        let mut attrs = input.call(Attribute::parse_outer)?;
+        let attrs = input.call(Attribute::parse_outer)?;
         let vis = input.parse()?;
         let _ = input.parse::<Token![type]>()?;
         let name = input.parse()?;
@@ -60,9 +57,6 @@ impl Parse for Args {
 
 #[proc_macro_attribute]
 pub fn type_union(attr: TokenStream, item: TokenStream) -> TokenStream {
-    println!("attr: {}", attr.to_string());
-    println!("item: {}", item.to_string());
-
     let Args { superset } = parse_macro_input!(attr as Args);
     let TypeItem {
         attrs,
@@ -93,6 +87,14 @@ pub fn type_union(attr: TokenStream, item: TokenStream) -> TokenStream {
         }
 
         #impls
+
+        #(
+            impl From<#cases> for #name {
+                fn from(value: #cases) -> Self {
+                    #name::#cases(value)
+                }
+            }
+        )*
     }
     .into()
 }
