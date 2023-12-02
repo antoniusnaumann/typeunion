@@ -1,14 +1,16 @@
 [package]
 name = "typeunion"
+description = "Attribute macro to declare type unions in Rust"
+keywords = ["macro", "type-union", "union-type", "enum"]
+authors = ["Antonius Naumann <git@antonius.dev>"]
+repository = "https://github.com/antoniusnaumann/typeunion"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT OR Apache-2.0"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.70"
 quote = "1.0.33"
 syn = { version = "2.0.39", features = ["full"] }
